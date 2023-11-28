@@ -14,6 +14,8 @@ from keras.layers import MaxPooling2D
 from keras.layers import Flatten
 from keras.layers import Dense
 from keras.models import model_from_json
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 batch_size = 32
 
@@ -24,16 +26,15 @@ train_datagen = ImageDataGenerator(rescale=1/255)
 
 # Flow training images in batches of 128 using train_datagen generator
 train_generator = train_datagen.flow_from_directory(
-        'flowers',  # This is the source directory for training images
+        'images_scaler',  # This is the source directory for training images
         target_size=(200, 200),  # All images will be resized to 200 x 200
         batch_size=batch_size,
         # Specify the classes explicitly
-        classes = ['daisy','rose','sunflower','dandelion'],
+        classes = ['bottle','note','pen','square'],
         # Since we use categorical_crossentropy loss, we need categorical labels
         class_mode='categorical')
 
 import tensorflow as tf
-set
 
 model = tf.keras.models.Sequential([
     # Note the input shape is the desired size of the image 200x 200 with 3 bytes color
@@ -78,23 +79,22 @@ history = model.fit_generator(
         epochs=n_epochs,
         verbose=1)
 
-#model.save('model.h5')
+#model.save('shin_model1.h5')
 import tensorflowjs as tfjs
-
 tfjs.converters.save_keras_model(model, "./tfjs_model")
 
 import numpy as np
 from keras.preprocessing import image
-test_image = image.load_img('chukuhoutai117.jpeg', target_size = (200,200))
+test_image = image.load_img('3443059_LL1.jpg', target_size = (200,200))
 #test_image = image.img_to_array(test_image)
 test_image = np.expand_dims(test_image, axis=0)
 result = model.predict(test_image)
 
 if result[0][1] == 1:
-    print("ROSE")
+    print("ノート型ですよ")
 elif result[0][0] == 1:
-    print("DAISY")
+    print("円柱型ですよ")
 elif result[0][2] == 1:
-    print("SUNFLOWER")
+    print("ペン型ですよ")
 elif result[0][3] == 1:
-    print("DANDELION")
+    print("直方体ですよ")
